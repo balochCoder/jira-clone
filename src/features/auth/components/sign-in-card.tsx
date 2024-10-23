@@ -13,24 +13,26 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 
-const formSchema = z.object({
-    email: z.string().min(1, "Email Address is required").email(),
-    password: z.string().min(1, "Password is required")
-})
-
+import {loginSchema} from "@/features/auth/schemas";
+import {useLogin} from "@/features/auth/api/use-login";
 
 
 export const SignInCard = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+
+    const {mutate} = useLogin();
+
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
             password: "",
         }
     });
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+    const onSubmit = (values: z.infer<typeof loginSchema>) => {
+        mutate({
+            json: values
+        });
     }
 
     return (
@@ -113,7 +115,7 @@ export const SignInCard = () => {
             </div>
             <CardContent className="p-7 flex items-center justify-center">
                 <p>
-                   Don&apos;t have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link href="/sign-up">
                         <span className="text-blue-700">Sign Up</span>
                     </Link>
